@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model collectors {
+  id            Int                @id @default(autoincrement())
+  ip            String             @db.VarChar(50)
+  username      String             @db.VarChar(50)
+  password      String             @db.VarChar(255)
+  database_name String             @default("syslog_db") @db.VarChar(50)
+  status        collectors_status? @default(active)
+  created_at    DateTime?          @default(now()) @db.Timestamp(0)
+}
+
+model log_mirror {
+  id            Int      @id @default(autoincrement())
+  collector_id Int
+  received_at  DateTime? @db.DateTime(0)
+  hostname     String?   @db.VarChar(255)
+  facility     String?   @db.VarChar(50)
+  synced_at    DateTime? @default(now()) @db.Timestamp(0)
+  event        String?   @db.VarChar(50)
+  path         String?   @db.Text
+  file_folder  String?   @db.VarChar(50)
+  size         String?   @db.VarChar(50)
+  user         String?   @db.VarChar(50)
+  ip           String?   @db.VarChar(50)
+  message      String    @db.Text
+  category     String?   @db.Text
+}
+
+enum collectors_status {
+  active
+  inactive
+}
